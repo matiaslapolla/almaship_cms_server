@@ -1,3 +1,4 @@
+import { log } from "console";
 import db from "../util/PgConnect";
 
 class UserRepository {
@@ -41,17 +42,29 @@ class UserRepository {
 	}
 
 	async login(user: any) {
-		return await this.dbc.query(
-			"SELECT * FROM users WHERE email = $1 LIMIT 1",
-			[user.email]
-		);
+		try {
+			return await this.dbc.query(
+				"SELECT * FROM users WHERE email = $1 LIMIT 1",
+				[user.email]
+			);
+		} catch (error) {
+			log(error);
+		}
 	}
 
 	async register(user: any) {
-		return await this.dbc.query(
-			"INSERT INTO users (username, email, password) VALUES ($1, $2, $3)",
-			[user.username, user.email, user.password]
-		);
+		try {
+			let respreg = await this.dbc.query(
+				"INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
+				[user.username, user.email, user.password]
+			);
+			return respreg;
+		} catch (error: any) {
+			log("hubo un error", error);
+			if (error.code === "23505") {
+				throw new Error("Email already exists");
+			}
+		}
 	}
 }
 

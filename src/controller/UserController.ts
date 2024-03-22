@@ -62,8 +62,8 @@ export const userController = () => {
 		try {
 			const user = await service.register(req.body.data);
 			res.json(user);
-		} catch (error) {
-			console.error(error);
+		} catch (error: any) {
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -73,5 +73,7 @@ export const userController = () => {
 		createUser,
 		updateUser,
 		deleteUser,
+		login,
+		register,
 	};
 };

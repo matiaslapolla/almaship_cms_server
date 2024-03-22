@@ -2,7 +2,6 @@ import express, { Express } from "express";
 import { router } from "../router/router";
 
 const app: Express = express();
-const jwt = require("express-jwt");
 
 app.use(express.json());
 app.set("port", process.env.PORT || 3003);

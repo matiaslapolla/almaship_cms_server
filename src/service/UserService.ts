@@ -51,11 +51,16 @@ class UserService {
 
 		let emailresponse = await this.repo.login(user);
 
+		console.log(emailresponse);
+		console.log(req.password);
+
 		if (!emailresponse) {
 			return "Invalid Credentials";
 		}
 
-		let passwordMatch = await verify(emailresponse[0].password, req.password);
+		let passwordMatch = await verify(emailresponse.password, req.password);
+
+		console.log("passwordMatch ", passwordMatch);
 
 		if (!passwordMatch) {
 			return "Invalid Credentials";
@@ -63,9 +68,11 @@ class UserService {
 
 		const payload = { email: req.email };
 
-		const token = jwt.sign(payload, process.env.JWT_SECRET, {
+		const token = jwt.sign({ id: emailresponse.id }, process.env.JWT_SECRET, {
 			expiresIn: "1h",
 		});
+
+		console.log("token ", token);
 
 		return {
 			token: token,
@@ -75,14 +82,23 @@ class UserService {
 	}
 
 	public async register(req: any) {
-		const pwhash = hash(req.password);
+		try {
+			let pwhash = await hash(req.password, {
+				timeCost: 4,
+				memoryCost: 2 ** 14,
+				parallelism: 2,
+			});
 
-		let user = {
-			username: req.username,
-			email: req.email,
-			password: pwhash,
-		};
-		return await this.repo.register(user);
+			let user = {
+				username: req.username,
+				email: req.email,
+				password: pwhash,
+			};
+
+			return await this.repo.register(user);
+		} catch (error: any) {
+			throw new Error(error.message);
+		}
 	}
 }
 

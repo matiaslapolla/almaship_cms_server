@@ -4,6 +4,7 @@ import { articleController } from "../controller/ArticleController";
 import { tagController } from "../controller/TagController";
 import { categoryController } from "../controller/CategoryController";
 import { authorController } from "../controller/AuthorController";
+import { userController } from "../controller/UserController";
 
 export const router: Router = (() => {
 	const router = express.Router();
@@ -12,6 +13,7 @@ export const router: Router = (() => {
 	const tag_controller = tagController();
 	const category_controller = categoryController();
 	const author_controller = authorController();
+	const user_controller = userController();
 
 	router.get("/", (req, res) => {
 		res.send("Hello World");
@@ -48,5 +50,14 @@ export const router: Router = (() => {
 		author_controller.getAuthorArticlesByCategory
 	);
 	router.get("/author-articles-tag", author_controller.getAuthorArticlesByTag);
+
+	router.get("/users", user_controller.getUsers);
+	router.get("/user", user_controller.getUserById);
+	router.post("/create-user", user_controller.createUser);
+	router.post("/update-user", user_controller.updateUser);
+	router.post("/delete-user", user_controller.deleteUser);
+	router.post("/login", user_controller.login);
+	router.post("/register", user_controller.register);
+
 	return router;
 })();
