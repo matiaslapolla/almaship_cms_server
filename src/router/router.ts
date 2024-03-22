@@ -58,6 +58,8 @@ export const router: Router = (() => {
 	router.post("/delete-user", user_controller.deleteUser);
 	router.post("/login", user_controller.login);
 	router.post("/register", user_controller.register);
+	router.post("/logout", user_controller.logout);
+	router.post("/verify-token", user_controller.verifyToken);
 
 	return router;
 })();

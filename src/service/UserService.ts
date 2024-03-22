@@ -58,7 +58,7 @@ class UserService {
 			return "Invalid Credentials";
 		}
 
-		let passwordMatch = await verify(emailresponse.password, req.password);
+		let passwordMatch = await verify(emailresponse[0].password, req.password);
 
 		console.log("passwordMatch ", passwordMatch);
 
@@ -66,10 +66,8 @@ class UserService {
 			return "Invalid Credentials";
 		}
 
-		const payload = { email: req.email };
-
 		const token = jwt.sign({ id: emailresponse.id }, process.env.JWT_SECRET, {
-			expiresIn: "1h",
+			expiresIn: "10m",
 		});
 
 		console.log("token ", token);
@@ -98,6 +96,24 @@ class UserService {
 			return await this.repo.register(user);
 		} catch (error: any) {
 			throw new Error(error.message);
+		}
+	}
+
+	public async logout() {
+		return "logout";
+	}
+
+	public async verifyToken(token: string) {
+		try {
+			let decoded = jwt.verify(token, process.env.JWT_SECRET);
+			let resp = {
+				expire: new Date(decoded.exp * 1000).toISOString(),
+				initialized: new Date(decoded.iat * 1000).toISOString(),
+			};
+			return resp;
+		} catch (error) {
+			console.log("error ", error);
+			throw new Error("Invalid Token");
 		}
 	}
 }

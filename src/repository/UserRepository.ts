@@ -60,7 +60,6 @@ class UserRepository {
 			);
 			return respreg;
 		} catch (error: any) {
-			log("hubo un error", error);
 			if (error.code === "23505") {
 				throw new Error("Email already exists");
 			}

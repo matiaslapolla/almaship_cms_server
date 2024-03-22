@@ -67,6 +67,30 @@ export const userController = () => {
 		}
 	}
 
+	async function logout(req: Request, res: Response, next: NextFunction) {
+		try {
+			const user = await service.logout();
+			res.json(user);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
+	async function verifyToken(req: Request, res: Response, next: NextFunction) {
+		try {
+			if (!req.headers.token) {
+				res.status(403).json({ error: "No token provided" });
+			}
+			if (req.headers.token) {
+				const verified = await service.verifyToken(req.headers.token as string);
+				res.json(verified);
+			}
+		} catch (error: any) {
+			console.error(error);
+			res.status(500).json({ error: error.message });
+		}
+	}
+
 	return {
 		getUsers,
 		getUserById,
@@ -75,5 +99,7 @@ export const userController = () => {
 		deleteUser,
 		login,
 		register,
+		logout,
+		verifyToken,
 	};
 };
