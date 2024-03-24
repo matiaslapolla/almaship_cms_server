@@ -8,11 +8,12 @@ export interface Author {
 }
 
 export interface Article {
-	id: string;
+	id?: string;
 	title: string;
 	content: string;
-	tags: string[];
+	tags?: string[];
 	category: string;
+	image?: string;
 	author: Author;
 	created_at?: Date;
 	updated_at?: Date;
@@ -27,9 +28,9 @@ export interface Tag {
 }
 
 export interface Category {
-	value: string;
+	slug: string;
 	name: string;
-	id: string;
+	id?: string;
 	created_at?: Date;
 	updated_at?: Date;
 }

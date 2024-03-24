@@ -8,8 +8,9 @@ export const authorController = () => {
 		try {
 			const authors = await service.getAuthors();
 			res.json(authors);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -21,8 +22,9 @@ export const authorController = () => {
 		try {
 			const author = await service.getAuthorById(req.body.data.id);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -30,8 +32,9 @@ export const authorController = () => {
 		try {
 			const author = await service.createAuthor(req.body.data);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -39,8 +42,9 @@ export const authorController = () => {
 		try {
 			const author = await service.updateAuthor(req.body.data);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -48,8 +52,9 @@ export const authorController = () => {
 		try {
 			const author = await service.deleteAuthor(req.body.data.id);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -61,8 +66,9 @@ export const authorController = () => {
 		try {
 			const author = await service.getAuthorArticles(req.body.data.id);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -77,8 +83,9 @@ export const authorController = () => {
 				req.body.data.category_id
 			);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 
@@ -93,8 +100,9 @@ export const authorController = () => {
 				req.body.data.tag_id
 			);
 			res.json(author);
-		} catch (error) {
+		} catch (error: any) {
 			console.error(error);
+			res.status(500).json({ error: error.message });
 		}
 	}
 

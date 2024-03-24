@@ -18,20 +18,28 @@ class CategoryService {
 		return await this.repo.getCategoryById(id);
 	}
 
-	public async createCategory(req: Request) {
-		let category: Category = {
-			name: req.body.name,
-			id: req.body.id,
-			value: req.body.value,
+	public async createCategory(data: Category) {
+		let category: Category;
+		if (!data) {
+			throw new Error("createCategory called with null or undefined data");
+		}
+		category = {
+			name: data.name,
+			slug: data.slug,
 		};
-		return await this.repo.createCategory(category);
+		try {
+			return await this.repo.createCategory(category);
+		} catch (error) {
+			console.error(`createCategory error: ${error}`);
+			throw error;
+		}
 	}
 
 	public async updateCategory(req: Request) {
 		let category: Category = {
 			id: req.body.id,
 			name: req.body.name,
-			value: req.body.value,
+			slug: req.body.slug,
 		};
 		return await this.repo.updateCategory(category);
 	}

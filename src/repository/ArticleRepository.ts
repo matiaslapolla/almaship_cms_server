@@ -1,5 +1,3 @@
-// article repo
-
 import db from "../util/PgConnect";
 
 class ArticleRepository {
@@ -11,8 +9,36 @@ class ArticleRepository {
 	}
 
 	async getArticles() {
-		console.log("getArticles in repo");
-		return await this.dbc.query("SELECT * FROM articles");
+		let articles = await this.dbc.query("SELECT * FROM articles");
+		let authors: any = [];
+
+		for (let i = 0; i < articles.length; i++) {
+			let newAuthor = await this.gehtAuthorFromArticle(articles[i].author_id);
+			if (newAuthor.length > 0) {
+				if (!authors.find((author: any) => author.id === newAuthor[0].id)) {
+					authors.push(newAuthor[0]);
+				}
+			}
+		}
+
+		for (let i = 0; i < articles.length; i++) {
+			for (let j = 0; j < authors.length; j++) {
+				if (articles[i].author_id === authors[j].id) {
+					articles[i].author = authors[j];
+				}
+			}
+		}
+
+		console.log("articles ", articles);
+
+		return articles;
+	}
+
+	private async gehtAuthorFromArticle(id: number) {
+		return await this.dbc.query(
+			"SELECT * FROM authors WHERE id = $1 LIMIT 1",
+			id
+		);
 	}
 
 	async getArticleById(id: number) {
@@ -21,15 +47,13 @@ class ArticleRepository {
 
 	async createArticle(article: any) {
 		return await this.dbc.query(
-			"INSERT INTO articles (title, content, tags, category, author, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+			"INSERT INTO articles (title, content, tags, category, author_id) VALUES ($1, $2, $3, $4, $5)",
 			[
 				article.title,
 				article.content,
 				article.tags,
 				article.category,
-				article.author,
-				article.created_at,
-				article.updated_at,
+				article.author_id,
 			]
 		);
 	}

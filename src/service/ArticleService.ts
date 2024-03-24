@@ -12,7 +12,6 @@ class ArticleService {
 	}
 
 	public async getArticles() {
-		console.log("getArticles in service");
 		return await this.repo.getArticles();
 	}
 
@@ -21,17 +20,14 @@ class ArticleService {
 		return await this.repo.getArticleById(id);
 	}
 
-	public async createArticle(req: Request) {
-		let id = crypto.randomUUID();
+	public async createArticle(data: any) {
 		let article: Article = {
-			id: id,
-			title: req.body.title,
-			content: req.body.content,
-			tags: req.body.tags,
-			category: req.body.category,
-			author: req.body.author,
-			created_at: new Date(),
-			updated_at: new Date(),
+			title: data.title,
+			content: data.content,
+			tags: data.tags ? data.tags.map((tag: Tag) => tag.id) : [],
+			category: data.category.id,
+			author: data.author.id,
+			image: data.image ? data.image : null,
 		};
 
 		return await this.repo.createArticle(article);

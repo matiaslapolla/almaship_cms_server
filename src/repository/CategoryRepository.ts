@@ -1,3 +1,4 @@
+import { Category } from "../types/types";
 import db from "../util/PgConnect";
 
 class CategoryRepository {
@@ -16,17 +17,17 @@ class CategoryRepository {
 		return await this.dbc.query("SELECT * FROM categories WHERE id = $1", [id]);
 	}
 
-	async createCategory(category: any) {
+	async createCategory(category: Category) {
 		return await this.dbc.query(
-			"INSERT INTO categories (name, value, created_at, updated_at) VALUES ($1, $2, $3, $4)",
-			[category.name, category.value, category.created_at, category.updated_at]
+			"INSERT INTO categories (name, slug) VALUES ($1, $2) RETURNING *",
+			[category.name, category.slug]
 		);
 	}
 
-	async updateCategory(category: any) {
+	async updateCategory(category: Category) {
 		return await this.dbc.query(
 			"UPDATE categories SET name = $1, value = $2 WHERE id = $3",
-			[category.name, category.value, category.id]
+			[category.name, category.slug, category.id]
 		);
 	}
 
