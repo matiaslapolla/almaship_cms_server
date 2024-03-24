@@ -18,11 +18,10 @@ class TagService {
 		return await this.repo.getTagById(id);
 	}
 
-	public async createTag(req: Request) {
+	public async createTag(data: Tag) {
 		let tag: Tag = {
-			name: req.body.name,
-			id: req.body.id,
-			value: req.body.value,
+			name: data.name,
+			value: data.value,
 		};
 		return await this.repo.createTag(tag);
 	}

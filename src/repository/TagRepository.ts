@@ -18,8 +18,8 @@ class TagRepository {
 
 	async createTag(tag: any) {
 		return await this.dbc.query(
-			"INSERT INTO tags (name, created_at, updated_at) VALUES ($1, $2, $3)",
-			[tag.name, tag.created_at, tag.updated_at]
+			"INSERT INTO tags (name, value) VALUES ($1, $2) RETURNING id",
+			[tag.name, tag.value]
 		);
 	}
 
