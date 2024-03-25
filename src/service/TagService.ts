@@ -19,10 +19,15 @@ class TagService {
 	}
 
 	public async createTag(data: Tag) {
-		let tag: Tag = {
-			name: data.name,
-			value: data.value,
+		if (!data) {
+			throw new Error("Missing required parameter: data");
+		}
+
+		const tag: Tag = {
+			name: data.name || "",
+			value: data.value || "",
 		};
+
 		return await this.repo.createTag(tag);
 	}
 
