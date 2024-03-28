@@ -15,8 +15,9 @@ class ArticleService {
 		return await this.repo.getArticles();
 	}
 
-	public async getArticleById(req: Request) {
-		let id = req.body.id;
+	public async getArticleById(params: any) {
+		console.log("params ", params);
+		let id = params.id;
 		return await this.repo.getArticleById(id);
 	}
 
@@ -25,8 +26,8 @@ class ArticleService {
 			title: data.title,
 			content: data.content,
 			tags: data.tags ? data.tags.map((tag: Tag) => tag.id) : [],
-			category: data.category.id,
-			author: data.author.id,
+			category: data.category.id.toString(),
+			author: data.author.id.toString(),
 			image: data.image ? data.image : null,
 		};
 
@@ -47,8 +48,7 @@ class ArticleService {
 		return await this.repo.updateArticle(article);
 	}
 
-	public async deleteArticle(req: Request) {
-		let id = req.body.id;
+	public async deleteArticle(id: any) {
 		return await this.repo.deleteArticle(id);
 	}
 

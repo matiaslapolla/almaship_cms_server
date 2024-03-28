@@ -14,7 +14,7 @@ export interface Article {
 	tags?: string[];
 	category: string;
 	image?: string;
-	author: Author;
+	author: string;
 	created_at?: Date;
 	updated_at?: Date;
 }

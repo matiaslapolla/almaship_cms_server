@@ -22,7 +22,8 @@ export const articleController = () => {
 		next: NextFunction
 	) {
 		try {
-			const article = await service.getArticleById(req.body.data.id);
+			const query = req.query;
+			const article = await service.getArticleById(query);
 			res.json(article);
 		} catch (error) {
 			console.error(error);
@@ -75,6 +76,7 @@ export const articleController = () => {
 		next: NextFunction
 	) {
 		try {
+			console.log(req.body);
 			const article = await service.deleteArticle(req.body.data.id);
 			res.json(article);
 		} catch (error) {

@@ -20,7 +20,7 @@ export const authorController = () => {
 		next: NextFunction
 	) {
 		try {
-			const author = await service.getAuthorById(req.body.data.id);
+			const author = await service.getAuthorById(req.query.id);
 			res.json(author);
 		} catch (error: any) {
 			console.error(error);

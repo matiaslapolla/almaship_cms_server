@@ -13,8 +13,7 @@ class AuthorService {
 		return await this.repo.getAuthors();
 	}
 
-	public async getAuthorById(req: Request) {
-		let id = req.body.id;
+	public async getAuthorById(id: any) {
 		return await this.repo.getAuthorById(id);
 	}
 

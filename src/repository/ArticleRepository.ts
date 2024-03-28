@@ -9,51 +9,100 @@ class ArticleRepository {
 	}
 
 	async getArticles() {
-		let articles = await this.dbc.query("SELECT * FROM articles");
+		console.log("getting articles from repo");
+		let articles: any;
+
+		try {
+			articles = await this.dbc.query(
+				"SELECT * FROM articles WHERE archived = false"
+			);
+			console.log("got articles", articles);
+		} catch (error) {
+			console.error("error getting articles", error);
+			return [];
+		}
+
 		let authors: any = [];
 
 		for (let i = 0; i < articles.length; i++) {
-			let newAuthor = await this.gehtAuthorFromArticle(articles[i].author_id);
-			if (newAuthor.length > 0) {
-				if (!authors.find((author: any) => author.id === newAuthor[0].id)) {
-					authors.push(newAuthor[0]);
-				}
+			console.log("getting author", articles[i].author_id);
+			let newAuthor: any;
+
+			try {
+				newAuthor = await this.gehtAuthorFromArticle(articles[i].author_id);
+				console.log("got author", newAuthor);
+			} catch (error) {
+				console.error("error getting author", error);
+				continue;
+			}
+
+			if (!newAuthor || newAuthor.length === 0) {
+				console.log("did not get author");
+				continue;
+			}
+
+			if (!authors.find((author: any) => author.id === newAuthor[0].id)) {
+				console.log("adding author", newAuthor[0]);
+				authors.push(newAuthor[0]);
 			}
 		}
 
 		for (let i = 0; i < articles.length; i++) {
+			if (!articles[i]) {
+				console.log("article is undefined or null");
+				continue;
+			}
+
 			for (let j = 0; j < authors.length; j++) {
+				if (!authors[j]) {
+					console.log("author is undefined or null");
+					continue;
+				}
+
 				if (articles[i].author_id === authors[j].id) {
+					console.log("setting author", authors[j]);
 					articles[i].author = authors[j];
 				}
 			}
 		}
 
-		console.log("articles ", articles);
-
+		console.log("returning articles", articles);
 		return articles;
 	}
 
 	private async gehtAuthorFromArticle(id: number) {
-		return await this.dbc.query(
-			"SELECT * FROM authors WHERE id = $1 LIMIT 1",
-			id
-		);
+		return await this.dbc.query("SELECT * FROM authors WHERE id = $1", id);
 	}
 
 	async getArticleById(id: number) {
-		return await this.dbc.query("SELECT * FROM articles WHERE id = $1", [id]);
+		console.log("id on repo", id);
+
+		if (!this.dbc) {
+			throw new Error("Database connection not initialized.");
+		}
+
+		try {
+			return await this.dbc.query(
+				"SELECT * FROM articles WHERE id = $1 LIMIT 1",
+				[id]
+			);
+		} catch (error: any) {
+			throw new Error(
+				`Failed to get article by id: ${id}. Error: ${error.message}`
+			);
+		}
 	}
 
 	async createArticle(article: any) {
 		return await this.dbc.query(
-			"INSERT INTO articles (title, content, tags, category, author_id) VALUES ($1, $2, $3, $4, $5)",
+			"INSERT INTO articles (title, content, tags, category, author_id, image) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
 			[
 				article.title,
 				article.content,
 				article.tags,
 				article.category,
-				article.author_id,
+				article.author,
+				article.image,
 			]
 		);
 	}
@@ -72,7 +121,10 @@ class ArticleRepository {
 	}
 
 	async deleteArticle(id: number) {
-		return await this.dbc.query("DELETE FROM articles WHERE id = $1", [id]);
+		return await this.dbc.query(
+			"UPDATE articles SET archived = true WHERE id = $1",
+			[id]
+		);
 	}
 
 	async uploadArticleImage(image: any) {
